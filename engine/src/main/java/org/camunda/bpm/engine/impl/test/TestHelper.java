@@ -16,6 +16,17 @@
  */
 package org.camunda.bpm.engine.impl.test;
 
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
@@ -50,11 +61,6 @@ import org.camunda.bpm.engine.test.RequiredHistoryLevel;
 import org.junit.Assert;
 import org.junit.runner.Description;
 import org.slf4j.Logger;
-
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.*;
 
 
 /**
@@ -147,8 +153,11 @@ public abstract class TestHelper {
     return annotationDeploymentSetUp(processEngine, testClass, methodName, null);
   }
 
-  public static void annotationDeploymentTearDown(ProcessEngine processEngine, String deploymentId, Class<?> testClass, String methodName) {
-    LOG.debug("annotation @Deployment deletes deployment for {}.{}", ClassNameUtil.getClassNameWithoutPackage(testClass), methodName);
+  public static void annotationDeploymentTearDown(ProcessEngine processEngine, 
+      String deploymentId, Class<?> testClass, String methodName ) {
+    LOG.debug("annotation @Deployment deletes deployment for {}.{}"
+        , ClassNameUtil.getClassNameWithoutPackage(testClass), methodName
+        );
     deleteDeployment(processEngine, deploymentId);
   }
 
@@ -490,6 +499,7 @@ public abstract class TestHelper {
   public static void createSchema(ProcessEngineConfigurationImpl processEngineConfiguration) {
     processEngineConfiguration.getCommandExecutorTxRequired()
         .execute(new Command<Object>() {
+          @Override
           public Object execute(CommandContext commandContext) {
 
             commandContext.getSession(PersistenceSession.class).dbSchemaCreate();
@@ -501,7 +511,8 @@ public abstract class TestHelper {
   public static void dropSchema(ProcessEngineConfigurationImpl processEngineConfiguration) {
     processEngineConfiguration.getCommandExecutorTxRequired()
         .execute(new Command<Object>() {
-         public Object execute(CommandContext commandContext) {
+         @Override
+        public Object execute(CommandContext commandContext) {
            commandContext.getDbSqlSession().dbSchemaDrop();
            return null;
          }
@@ -511,7 +522,8 @@ public abstract class TestHelper {
   public static void createOrUpdateHistoryLevel(final ProcessEngineConfigurationImpl processEngineConfiguration) {
     processEngineConfiguration.getCommandExecutorTxRequired()
       .execute(new Command<Object>() {
-       public Object execute(CommandContext commandContext) {
+       @Override
+      public Object execute(CommandContext commandContext) {
          DbEntityManager dbEntityManager = commandContext.getDbEntityManager();
          PropertyEntity historyLevelProperty = dbEntityManager.selectById(PropertyEntity.class, "historyLevel");
          if (historyLevelProperty != null) {
@@ -530,7 +542,8 @@ public abstract class TestHelper {
   public static void deleteHistoryLevel(ProcessEngineConfigurationImpl processEngineConfiguration) {
     processEngineConfiguration.getCommandExecutorTxRequired()
       .execute(new Command<Object>() {
-       public Object execute(CommandContext commandContext) {
+       @Override
+      public Object execute(CommandContext commandContext) {
          DbEntityManager dbEntityManager = commandContext.getDbEntityManager();
          PropertyEntity historyLevelProperty = dbEntityManager.selectById(PropertyEntity.class, "historyLevel");
          if (historyLevelProperty != null) {
