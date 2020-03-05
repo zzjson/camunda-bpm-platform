@@ -31,6 +31,7 @@ import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.interceptor.CommandExecutor;
 import org.camunda.bpm.engine.impl.jobexecutor.TimerActivateProcessDefinitionHandler;
 import org.camunda.bpm.engine.impl.jobexecutor.TimerSuspendProcessDefinitionHandler;
+import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.management.JobDefinitionQuery;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.repository.ProcessDefinitionQuery;
@@ -643,6 +644,38 @@ public class MultiTenancyProcessDefinitionSuspensionStateTest {
       .updateProcessDefinitionSuspensionState()
       .byProcessDefinitionKey(PROCESS_DEFINITION_KEY)
       .suspend();
+
+    engineRule.getIdentityService().clearAuthentication();
+
+    assertThat(query.active().count(), is(1L));
+    assertThat(query.suspended().count(), is(2L));
+    assertThat(query.active().tenantIdIn(TENANT_TWO).count(), is(1L));
+    assertThat(query.suspended().tenantIdIn(TENANT_ONE).count(), is(1L));
+    assertThat(query.suspended().withoutTenantId().count(), is(1L));
+  }
+
+  @Test
+  @org.junit.Ignore("CAM-11519")
+  public void delayedSuspendProcessDefinitionWithAuthenticatedTenant() {
+    // given activated process definitions
+    ProcessDefinitionQuery query = engineRule.getRepositoryService().createProcessDefinitionQuery();
+    assertThat(query.active().count(), is(3L));
+    assertThat(query.suspended().count(), is(0L));
+
+    engineRule.getIdentityService().setAuthentication("user", null, Arrays.asList(TENANT_ONE));
+
+    engineRule.getRepositoryService()
+      .updateProcessDefinitionSuspensionState()
+      .byProcessDefinitionKey(PROCESS_DEFINITION_KEY)
+      .executionDate(tomorrow())
+      .suspend();
+
+    // when execute the job to suspend the process definitions
+    Job job = engineRule.getManagementService().createJobQuery().timers().singleResult();
+    assertThat(job, is(notNullValue()));
+
+    ClockUtil.offset(tomorrow().getTime() + 10000L);
+    testRule.waitForJobExecutorToProcessAllJobs(10000L);
 
     engineRule.getIdentityService().clearAuthentication();
 
