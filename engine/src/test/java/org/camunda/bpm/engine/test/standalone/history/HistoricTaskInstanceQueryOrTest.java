@@ -46,6 +46,7 @@ import java.util.List;
 
 import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
+import org.camunda.bpm.engine.history.HistoricTaskInstanceQuery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -827,6 +828,34 @@ public class HistoricTaskInstanceQueryOrTest {
 
     // then
     assertThat(tasks.size()).isEqualTo(2);
+  }
+
+  @org.junit.Ignore("CAM-11666")
+  @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
+  @Deployment(resources = "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml")
+  @Test
+  public void shouldReturnHistoricTasksFilteredByCandidateGroupOrUser() {
+    // given
+    String instanceIdOne = runtimeService.startProcessInstanceByKey("oneTaskProcess").getId();
+    String instanceIdTwo = runtimeService.startProcessInstanceByKey("oneTaskProcess").getId();
+    String taskIdOne = taskService.createTaskQuery().processInstanceId(instanceIdOne).singleResult().getId();
+    String taskIdTwo = taskService.createTaskQuery().processInstanceId(instanceIdTwo).singleResult().getId();
+
+    // when
+    taskService.addCandidateUser(taskIdOne, "aUserId");
+    taskService.addCandidateGroup(taskIdOne, "aGroupId");
+    taskService.addCandidateGroup(taskIdOne, "bGroupId");
+
+    taskService.addCandidateUser(taskIdTwo, "bUserId");
+    taskService.addCandidateGroup(taskIdTwo, "aGroupId");
+
+    // then
+    HistoricTaskInstanceQuery query = historyService.createHistoricTaskInstanceQuery()
+        .or()
+          .taskHadCandidateGroup("bGroupId")
+          .taskHadCandidateUser("bUserId")
+        .endOr();
+    assertEquals(2, query.count());
   }
 
   public HashMap<String, Date> createFollowUpAndDueDateTasks() throws ParseException {
