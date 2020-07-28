@@ -119,6 +119,7 @@
         <database.type>db2</database.type>
         <database.driver>com.ibm.db2.jcc.DB2Driver</database.driver>
         <database.datasource.class>com.ibm.db2.jcc.DB2SimpleDataSource</database.datasource.class>
+        <database.url>jdbc:db2://${database.host}:${database.port}/${database.name}</database.url>
       </properties>
 
       <dependencies>
@@ -246,6 +247,8 @@
         <database.type>mariadb</database.type>
         <database.driver>org.mariadb.jdbc.Driver</database.driver>
         <database.datasource.class>org.mariadb.jdbc.MySQLDataSource</database.datasource.class>
+        <database.url>jdbc:mariadb://${database.host}:${database.port}/${database.name}</database.url>
+        <database.docker.image>mariadb:10.3.22</database.docker.image>
       </properties>
 
       <dependencies>
@@ -279,6 +282,24 @@
         <version.mariadb>${version.mariadb.galera}</version.mariadb>
       </properties>
     </profile>
+    <profile>
+      <id>mariadb-10.3</id>
+      <properties>
+        <database.docker.image>mariadb:10.3.22</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
+      <id>mariadb-10.2</id>
+      <properties>
+        <database.docker.image>mariadb:10.2.31</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
+      <id>mariadb-10.0</id>
+      <properties>
+        <database.docker.image>mariadb:10.0.38</database.docker.image>
+      </properties>
+    </profile>
 
     <profile>
       <id>mysql</id>
@@ -286,6 +307,8 @@
         <database.type>mysql</database.type>
         <database.driver>com.mysql.jdbc.Driver</database.driver>
         <database.datasource.class>com.mysql.jdbc.jdbc2.optional.MysqlDataSource</database.datasource.class>
+        <database.url>jdbc:mysql://${database.host}:${database.port}/${database.name}</database.url>
+        <database.docker.image>mysql:5.7.29</database.docker.image>
       </properties>
 
       <dependencies>
@@ -313,6 +336,20 @@
         </pluginManagement>
       </build>
     </profile>
+    <profile>
+      <id>mysql-5.7</id>
+      <properties>
+        <database.docker.image>mysql:5.7.29</database.docker.image>
+        <!-- Camunda Docker image -->
+        <!-- <database.docker.image>registry.camunda.com/camunda-ci-mysql:5.7</database.docker.image> -->
+      </properties>
+    </profile>
+    <profile>
+      <id>mysql-5.6</id>
+      <properties>
+        <database.docker.image>mysql:5.6.47</database.docker.image>
+      </properties>
+    </profile>
 
     <profile>
       <id>oracle</id>
@@ -320,6 +357,7 @@
         <database.type>oracle</database.type>
         <database.driver>oracle.jdbc.OracleDriver</database.driver>
         <database.datasource.class>oracle.jdbc.pool.OracleDataSource</database.datasource.class>
+        <database.url>jdbc:oracle:thin:@${database.host}:${database.port}:${database.name}</database.url>
       </properties>
     </profile>
     <profile>
@@ -453,6 +491,8 @@
         <database.datasource.class>org.postgresql.ds.PGSimpleDataSource</database.datasource.class>
         <jboss.datasource.filename>postgresql-ds.xml</jboss.datasource.filename>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+        <database.url>jdbc:postgresql://${database.host}:${database.port}/${database.name}</database.url>
+        <database.docker.image>postgresql:9.6.17</database.docker.image>
       </properties>
 
       <dependencies>
@@ -481,6 +521,48 @@
       </build>
     </profile>
     <profile>
+      <id>postgresql-12.2</id>
+      <properties>
+        <database.docker.image>postgresql:12.2</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
+      <id>postgresql-11.2</id>
+      <properties>
+        <database.docker.image>postgresql:11.2</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
+      <id>postgresql-11.1</id>
+      <properties>
+        <database.docker.image>postgresql:11.1</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
+      <id>postgresql-10.7</id>
+      <properties>
+        <database.docker.image>postgresql:10.7</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
+      <id>postgresql-10.4</id>
+      <properties>
+        <database.docker.image>postgresql:10.4</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
+      <id>postgresql-9.6</id>
+      <properties>
+        <database.docker.image>postgresql:9.6.17</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
+      <id>postgresql-9.4</id>
+      <properties>
+        <database.docker.image>postgresql:9.4.26</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
       <id>postgresql-xa</id>
       <properties>
         <database.datasource.class>org.postgresql.xa.PGXADataSource</database.datasource.class>
@@ -495,6 +577,8 @@
         <database.datasource.class>org.postgresql.ds.PGSimpleDataSource</database.datasource.class>
         <jboss.datasource.filename>postgresql-ds.xml</jboss.datasource.filename>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+        <database.url>jdbc:postgresql://${database.host}:${database.port}/${database.name}</database.url>
+        <database.docker.image>cockroach:v20.1.3</database.docker.image>
       </properties>
 
       <dependencies>
@@ -530,6 +614,8 @@
         <database.type>mssql</database.type>
         <database.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</database.driver>
         <database.datasource.class>com.microsoft.sqlserver.jdbc.SQLServerDataSource</database.datasource.class>
+        <database.url>jdbc:sqlserver://${database.host}:${database.port};DatabaseName=${database.name}</database.url>
+        <database.docker.image>registry.camunda.com/camunda-ci-sqlserver:2012</database.docker.image>
       </properties>
 
       <dependencies>
@@ -556,6 +642,25 @@
           </plugins>
         </pluginManagement>
       </build>
+    </profile>
+    <profile>
+      <id>sqlserver-2017</id>
+      <properties>
+        <database.docker.image>sqlserver:2017-latest</database.docker.image>
+      </properties>
+    </profile>
+    <profile>
+      <id>sqlserver-2019</id>
+      <properties>
+        <database.docker.image>sqlserver:2019-latest</database.docker.image>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>testcontainers</id>
+      <properties>
+        <database.url>jdbc:tc:${database.docker.image}:///${database.name}</database.url>
+      </properties>
     </profile>
   </profiles>
 
