@@ -4,15 +4,10 @@ String POSTGRES_DB_CONFIG = '-Ddatabase.url=jdbc:postgresql://localhost:5432/pro
 String MARIADB_DB_CONFIG = '-Ddatabase.url=jdbc:mariadb://localhost:3306/process-engine -Ddatabase.username=camunda -Ddatabase.password=camunda'
 String MYSQL_DB_CONFIG = '-Ddatabase.url=jdbc:mysql://localhost:3306/process-engine -Ddatabase.username=camunda -Ddatabase.password=camunda'
 String SQLSERVER_DB_CONFIG = '-Ddatabase.url=jdbc:sqlserver://localhost:1433;DatabaseName=master -Ddatabase.username=sa -Ddatabase.password=cambpm-123#'
-
 String PG_96 = '9.6.18'
-
 String MDB_102 = '10.2.33'
-
 String MYSQL_57 = '5.7.31'
-
 String MSSQL_17 = '2017-latest'
-
 String getMavenAgent(Integer mavenCpuLimit = 4, String dockerTag = '3.6.3-openjdk-8'){
   String mavenForkCount = mavenCpuLimit;
   String mavenMemoryLimit = mavenCpuLimit * 2;
