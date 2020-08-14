@@ -1,9 +1,7 @@
 #!/usr/bin/env groovy
 
 String POSTGRES_DB_CONFIG = '-Ddatabase.url=jdbc:postgresql://localhost:5432/process-engine -Ddatabase.username=camunda -Ddatabase.password=camunda'
-String MARIADB_DB_CONFIG = '-Ddatabase.url=jdbc:mariadb://localhost:3306/process-engine -Ddatabase.username=camunda -Ddatabase.password=camunda'
 String PG_96 = '9.6.18'
-String MDB_102 = '10.2.33'
 String getMavenAgent(Integer mavenCpuLimit = 4, String dockerTag = '3.6.3-openjdk-8'){
   String mavenForkCount = mavenCpuLimit;
   String mavenMemoryLimit = mavenCpuLimit * 2;
@@ -69,29 +67,6 @@ String getPostgresAgent(String dockerTag = '9.6.18', Integer cpuLimit = 1){
     - name: POSTGRES_USER
       value: camunda
     - name: POSTGRES_PASSWORD
-      value: camunda
-    resources:
-      limits:
-        cpu: ${cpuLimit}
-        memory: ${memoryLimit}Gi
-      requests:
-        cpu: ${cpuLimit}
-        memory: ${memoryLimit}Gi
-  """
-}
-String getMariaDbAgent(String dockerTag = '10.2', Integer cpuLimit = 1){
-  String memoryLimit = cpuLimit * 2;
-  """
-  - name: mariadb
-    image: mariadb:${dockerTag}
-    env:
-    - name: TZ
-      value: Europe/Berlin
-    - name: MYSQL_DATABASE
-      value: process-engine
-    - name: MYSQL_USER
-      value: camunda
-    - name: MYSQL_PASSWORD
       value: camunda
     resources:
       limits:
@@ -312,40 +287,6 @@ pipeline{
             }
           }
         }
-        stage('Engine UNIT & Authorization tests - MariaDB 10.2') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent(16) + getMariaDbAgent(MDB_102)
-            }
-          }
-          stages {
-            stage('Engine UNIT tests') {
-              steps{
-                container("maven"){
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd engine && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU test -Pdatabase,mariadb ${MARIADB_DB_CONFIG}
-                    """
-                  }
-                }
-              }
-            }
-            stage("Engine UNIT: Authorizations Tests") {
-              steps {
-                container("maven") {
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd engine/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,mariadb,cfgAuthorizationCheckRevokesAlways ${MARIADB_DB_CONFIG} -B -T\$LIMITS_CPU
-                    """
-                  }
-                }
-              }
-            }
-          }
-        }
         stage("Engine UNIT: History Level Activity Tests") {
           agent {
             kubernetes {
@@ -550,40 +491,6 @@ pipeline{
             }
           }
         }
-        stage('QA: Instance Migration & Rolling Update Tests - MariaDB 10.2') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getMariaDbAgent(MDB_102)
-            }
-          }
-          stages {
-            stage('QA: Instance Migration Tests') {
-              steps{
-                container("maven"){
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd qa/test-db-instance-migration && mvn -s \$MAVEN_SETTINGS_XML -B verify -Pinstance-migration,mariadb ${MARIADB_DB_CONFIG}
-                    """
-                  }
-                }
-              }
-            }
-            stage('QA: Rolling Update Tests') {
-              steps{
-                container("maven"){
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd qa/test-db-rolling-update && mvn -s \$MAVEN_SETTINGS_XML -B verify -Prolling-update,mariadb ${MARIADB_DB_CONFIG}
-                    """
-                  }
-                }
-              }
-            }
-          }
-        }
         stage('QA: Upgrade old engine from 7.13 - H2') {
           agent {
             kubernetes {
@@ -620,24 +527,6 @@ pipeline{
             }
           }
         }
-        stage('QA: Upgrade old engine from 7.13 - MariaDB 10.2') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getMariaDbAgent(MDB_102)
-            }
-          }
-          steps{
-            container("maven"){
-              unstash "artifactStash"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd qa && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU verify -Pold-engine,mariadb ${MARIADB_DB_CONFIG}
-                """
-              }
-            }
-          }
-        }
         stage('QA: Upgrade database from 7.13 - H2') {
           agent {
             kubernetes {
@@ -669,24 +558,6 @@ pipeline{
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
                   cd qa/test-db-upgrade && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU verify -Pupgrade-db,postgresql ${POSTGRES_DB_CONFIG}
-                """
-              }
-            }
-          }
-        }
-        stage('QA: Upgrade database from 7.13 - MariaDB 10.2') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getMariaDbAgent(MDB_102)
-            }
-          }
-          steps{
-            container("maven"){
-              unstash "artifactStash"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd qa/test-db-upgrade && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU verify -Pupgrade-db,mariadb ${MARIADB_DB_CONFIG}
                 """
               }
             }
