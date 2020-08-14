@@ -170,7 +170,6 @@ pipeline{
             npm set unsafe-perm true
             apt -qq update && apt install -y g++ make
           '''
-          // Run maven
           configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
             sh """
               mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU clean source:jar install -D skipTests -Dmaven.repo.local=\$(pwd)/.m2
@@ -200,7 +199,6 @@ pipeline{
             stage('XML model') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -213,7 +211,6 @@ pipeline{
             stage('BPMN model') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -226,7 +223,6 @@ pipeline{
             stage('DMN model') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -239,7 +235,6 @@ pipeline{
             stage('CMMN model') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -252,7 +247,6 @@ pipeline{
             stage('camunda-commons-typed-values tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -265,7 +259,6 @@ pipeline{
             stage('DMN engine tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -283,7 +276,6 @@ pipeline{
               }
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -311,7 +303,6 @@ pipeline{
             stage('Engine UNIT tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -325,7 +316,6 @@ pipeline{
             stage("Engine UNIT: Authorizations Tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -347,7 +337,6 @@ pipeline{
             stage('Engine UNIT tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -361,7 +350,6 @@ pipeline{
             stage("Engine UNIT: Authorizations Tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -383,7 +371,6 @@ pipeline{
             stage('Engine UNIT tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -397,7 +384,6 @@ pipeline{
             stage("Engine UNIT: Authorizations Tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -419,7 +405,6 @@ pipeline{
             stage('Engine UNIT tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -433,7 +418,6 @@ pipeline{
             stage("Engine UNIT: Authorizations Tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -455,7 +439,6 @@ pipeline{
             stage('Engine UNIT tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -469,7 +452,6 @@ pipeline{
             stage("Engine UNIT: Authorizations Tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -489,7 +471,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -508,7 +489,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -527,7 +507,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -546,7 +525,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -567,7 +545,6 @@ pipeline{
             stage("Engine UNIT: CDI Integration Tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -581,7 +558,6 @@ pipeline{
             stage("Engine UNIT: Plugins Tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -594,7 +570,6 @@ pipeline{
             stage("Engine UNIT: Spring Integration Tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -614,7 +589,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -635,7 +609,6 @@ pipeline{
             stage('QA: Instance Migration Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -649,7 +622,6 @@ pipeline{
             stage('QA: Rolling Update Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -671,7 +643,6 @@ pipeline{
             stage('QA: Instance Migration Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -685,7 +656,6 @@ pipeline{
             stage('QA: Rolling Update Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -707,7 +677,6 @@ pipeline{
             stage('QA: Instance Migration Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -721,7 +690,6 @@ pipeline{
             stage('QA: Rolling Update Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -743,7 +711,6 @@ pipeline{
             stage('QA: Instance Migration Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -757,7 +724,6 @@ pipeline{
             stage('QA: Rolling Update Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -779,7 +745,6 @@ pipeline{
             stage('QA: Instance Migration Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -793,7 +758,6 @@ pipeline{
             stage('QA: Rolling Update Tests') {
               steps{
                 container("maven"){
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -813,7 +777,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -832,7 +795,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -851,7 +813,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -870,7 +831,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -889,7 +849,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -908,7 +867,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -927,7 +885,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -946,7 +903,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -965,7 +921,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -984,7 +939,6 @@ pipeline{
           }
           steps{
             container("maven"){
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1021,7 +975,6 @@ pipeline{
             stage('Rest API UNIT Jersey2 tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -1035,7 +988,6 @@ pipeline{
             stage("Rest API JAX-RS2 Jersey2 tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1057,7 +1009,6 @@ pipeline{
             stage('Rest API UNIT Resteasy tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -1071,7 +1022,6 @@ pipeline{
             stage('Rest API UNIT Resteasy3 tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1084,7 +1034,6 @@ pipeline{
             stage("Rest API JAX-RS2 Resteasy3 tests") {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1106,7 +1055,6 @@ pipeline{
             stage('Rest API UNIT CXF tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -1120,7 +1068,6 @@ pipeline{
             stage('Rest API UNIT Wink tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1140,7 +1087,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1170,7 +1116,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1202,7 +1147,6 @@ pipeline{
             stage('Webapp UNIT tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -1216,7 +1160,6 @@ pipeline{
             stage('Webapp UNIT: DB-Table-prefix tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1229,7 +1172,6 @@ pipeline{
             stage('Webapp UNIT: Authorizations tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1262,7 +1204,6 @@ pipeline{
             stage('Webapp UNIT tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -1276,7 +1217,6 @@ pipeline{
             stage('Webapp UNIT: Authorizations tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1309,7 +1249,6 @@ pipeline{
             stage('Webapp UNIT tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -1323,7 +1262,6 @@ pipeline{
             stage('Webapp UNIT: Authorizations tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1356,7 +1294,6 @@ pipeline{
             stage('Webapp UNIT tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -1370,7 +1307,6 @@ pipeline{
             stage('Webapp UNIT: Authorizations tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1403,7 +1339,6 @@ pipeline{
             stage('Webapp UNIT tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
@@ -1417,7 +1352,6 @@ pipeline{
             stage('Webapp UNIT: Authorizations tests') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1444,7 +1378,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1463,7 +1396,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1482,7 +1414,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1501,7 +1432,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1525,7 +1455,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1544,7 +1473,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1563,7 +1491,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1582,7 +1509,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1601,7 +1527,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1620,7 +1545,6 @@ pipeline{
           }
           steps {
             container("maven") {
-              // Run maven
               unstash "artifactStash"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
@@ -1644,7 +1568,6 @@ pipeline{
           steps{
             container("maven"){
               unstash "artifactStash"
-              // Run maven
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1659,7 +1582,6 @@ pipeline{
         stage('webapp-IT-tomcat-h2') {
           steps {
             container("maven") {
-              // Run maven
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1672,7 +1594,6 @@ pipeline{
         stage('webapp-IT-standalone-tomcat') {
           steps {
             container("maven") {
-              // Run maven
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1695,7 +1616,6 @@ pipeline{
           steps{
             container("maven"){
               unstash "artifactStash"
-              // Run maven
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1710,7 +1630,6 @@ pipeline{
             stage('Run: IT') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -1724,7 +1643,6 @@ pipeline{
             stage('Spring Boot Starter: IT') {
               steps {
                 container("maven") {
-                  // Run maven
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
