@@ -799,85 +799,6 @@ pipeline{
         }
       }
     }
-    stage("JDK Tests") {
-      failFast true
-      parallel {
-        // There are no Maven Docker Images with Oracle JDK versions.
-        // We will probably need to provide our own custom OracleJDK-Maven Docker Images
-        stage('OpenJDK 8 tests') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent( 3, '3.6.3-openjdk-8')
-            }
-          }
-          steps {
-            container("maven") {
-              unstash "artifactStash"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU install source:jar source:test-jar -Pdistro,distro-ce,distro-wildfly -B
-                """
-              }
-            }
-          }
-        }
-        stage('OpenJDK 11 tests') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent( 3, '3.6.3-openjdk-11')
-            }
-          }
-          steps {
-            container("maven") {
-              unstash "artifactStash"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU install source:jar source:test-jar -pl '!distro/jbossas7/subsystem' -Pdistro,distro-ce,distro-wildfly -B
-                """
-              }
-            }
-          }
-        }
-        stage('OpenJDK 14 tests') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent( 3, '3.6.3-openjdk-14')
-            }
-          }
-          steps {
-            container("maven") {
-              unstash "artifactStash"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU install source:jar source:test-jar -pl '!distro/jbossas7/subsystem' -Pdistro,distro-ce,distro-wildfly -B
-                """
-              }
-            }
-          }
-        }
-        stage('IBM JDK 8 tests') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent(3, '3.6.3-ibmjava-8')
-            }
-          }
-          steps {
-            container("maven") {
-              unstash "artifactStash"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU install source:jar source:test-jar -Pdistro,distro-ce,distro-wildfly -B
-                """
-              }
-            }
-          }
-        }
-      }
-    }
     stage("Engine & Webapps IT Tests") {
       failFast true
       parallel {
@@ -1085,6 +1006,85 @@ pipeline{
                     """
                   }
                 }
+              }
+            }
+          }
+        }
+      }
+    }
+    stage("JDK Tests") {
+      failFast true
+      parallel {
+        // There are no Maven Docker Images with Oracle JDK versions.
+        // We will probably need to provide our own custom OracleJDK-Maven Docker Images
+        stage('OpenJDK 8 tests') {
+          agent {
+            kubernetes {
+              yaml getMavenAgent( 3, '3.6.3-openjdk-8')
+            }
+          }
+          steps {
+            container("maven") {
+              unstash "artifactStash"
+              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                sh """
+                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
+                  mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU install source:jar source:test-jar -Pdistro,distro-ce,distro-wildfly -B
+                """
+              }
+            }
+          }
+        }
+        stage('OpenJDK 11 tests') {
+          agent {
+            kubernetes {
+              yaml getMavenAgent( 3, '3.6.3-openjdk-11')
+            }
+          }
+          steps {
+            container("maven") {
+              unstash "artifactStash"
+              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                sh """
+                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
+                  mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU install source:jar source:test-jar -pl '!distro/jbossas7/subsystem' -Pdistro,distro-ce,distro-wildfly -B
+                """
+              }
+            }
+          }
+        }
+        stage('OpenJDK 14 tests') {
+          agent {
+            kubernetes {
+              yaml getMavenAgent( 3, '3.6.3-openjdk-14')
+            }
+          }
+          steps {
+            container("maven") {
+              unstash "artifactStash"
+              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                sh """
+                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
+                  mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU install source:jar source:test-jar -pl '!distro/jbossas7/subsystem' -Pdistro,distro-ce,distro-wildfly -B
+                """
+              }
+            }
+          }
+        }
+        stage('IBM JDK 8 tests') {
+          agent {
+            kubernetes {
+              yaml getMavenAgent(3, '3.6.3-ibmjava-8')
+            }
+          }
+          steps {
+            container("maven") {
+              unstash "artifactStash"
+              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                sh """
+                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
+                  mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU install source:jar source:test-jar -Pdistro,distro-ce,distro-wildfly -B
+                """
               }
             }
           }
