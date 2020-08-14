@@ -273,7 +273,7 @@ pipeline{
         }
       }
     }
-    stage("Top Level Components"){
+/*    stage("Top Level Components"){
       agent {
         kubernetes {
           yaml getMavenAgent()
@@ -3249,7 +3249,7 @@ pipeline{
 //          }
 //        }
       }
-    }
+    }*/
     stage("Webapp IT spring"){
       agent {
         kubernetes {
