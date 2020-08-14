@@ -485,42 +485,6 @@ pipeline{
             }
           }
         }
-        stage('Engine UNIT & Authorization tests - PostgreSQL 12.2') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent(16) + getPostgresAgent(PG_122)
-            }
-          }
-          stages {
-            stage('Engine UNIT tests') {
-              steps{
-                container("maven"){
-                  // Run maven
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd engine && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU test -Pdatabase,postgresql ${POSTGRES_DB_CONFIG}
-                    """
-                  }
-                }
-              }
-            }
-            stage("Engine UNIT: Authorizations Tests") {
-              steps {
-                container("maven") {
-                  // Run maven
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd engine/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,postgresql,cfgAuthorizationCheckRevokesAlways ${POSTGRES_DB_CONFIG} -B -T\$LIMITS_CPU
-                    """
-                  }
-                }
-              }
-            }
-          }
-        }
         stage('Engine UNIT & Authorization tests - MariaDB 10.2') {
           agent {
             kubernetes {
@@ -597,42 +561,6 @@ pipeline{
           agent {
             kubernetes {
               yaml getMavenAgent(16) + getSqlServerAgent(MSSQL_17)
-            }
-          }
-          stages {
-            stage('Engine UNIT tests') {
-              steps{
-                container("maven"){
-                  // Run maven
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd engine && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU test -Pdatabase,sqlserver ${SQLSERVER_DB_CONFIG}
-                    """
-                  }
-                }
-              }
-            }
-            stage("Engine UNIT: Authorizations Tests") {
-              steps {
-                container("maven") {
-                  // Run maven
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd engine/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,sqlserver,cfgAuthorizationCheckRevokesAlways ${SQLSERVER_DB_CONFIG} -B -T\$LIMITS_CPU
-                    """
-                  }
-                }
-              }
-            }
-          }
-        }
-        stage('Engine UNIT & Authorization tests - MS-SQL 2019') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent(16) + getSqlServerAgent(MSSQL_19)
             }
           }
           stages {
@@ -881,42 +809,6 @@ pipeline{
             }
           }
         }
-        stage('QA: Instance Migration & Rolling Update Tests - PostgreSQL 12.2') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getPostgresAgent(PG_122)
-            }
-          }
-          stages {
-            stage('QA: Instance Migration Tests') {
-              steps{
-                container("maven"){
-                  // Run maven
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd qa/test-db-instance-migration && mvn -s \$MAVEN_SETTINGS_XML -B verify -Pinstance-migration,postgresql ${POSTGRES_DB_CONFIG}
-                    """
-                  }
-                }
-              }
-            }
-            stage('QA: Rolling Update Tests') {
-              steps{
-                container("maven"){
-                  // Run maven
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd qa/test-db-rolling-update && mvn -s \$MAVEN_SETTINGS_XML -B verify -Prolling-update,postgresql ${POSTGRES_DB_CONFIG}
-                    """
-                  }
-                }
-              }
-            }
-          }
-        }
         stage('QA: Instance Migration & Rolling Update Tests - MariaDB 10.2') {
           agent {
             kubernetes {
@@ -1025,42 +917,6 @@ pipeline{
             }
           }
         }
-        stage('QA: Instance Migration & Rolling Update Tests - MS-SQL 2019') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getSqlServerAgent(MSSQL_19)
-            }
-          }
-          stages {
-            stage('QA: Instance Migration Tests') {
-              steps{
-                container("maven"){
-                  // Run maven
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd qa/test-db-instance-migration && mvn -s \$MAVEN_SETTINGS_XML -B verify -Pinstance-migration,sqlserver ${SQLSERVER_DB_CONFIG}
-                    """
-                  }
-                }
-              }
-            }
-            stage('QA: Rolling Update Tests') {
-              steps{
-                container("maven"){
-                  // Run maven
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd qa/test-db-rolling-update && mvn -s \$MAVEN_SETTINGS_XML -B verify -Prolling-update,sqlserver ${SQLSERVER_DB_CONFIG}
-                    """
-                  }
-                }
-              }
-            }
-          }
-        }
         stage('QA: Upgrade old engine from 7.13 - H2') {
           agent {
             kubernetes {
@@ -1084,25 +940,6 @@ pipeline{
           agent {
             kubernetes {
               yaml getMavenAgent() + getPostgresAgent(PG_96)
-            }
-          }
-          steps{
-            container("maven"){
-              // Run maven
-              unstash "artifactStash"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd qa && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU verify -Pold-engine,postgresql ${POSTGRES_DB_CONFIG}
-                """
-              }
-            }
-          }
-        }
-        stage('QA: Upgrade old engine from 7.13 - PostgreSQL 12.2') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getPostgresAgent(PG_122)
             }
           }
           steps{
@@ -1213,25 +1050,6 @@ pipeline{
             }
           }
         }
-        stage('QA: Upgrade database from 7.13 - PosgreSQL 12.2') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getPostgresAgent(PG_122)
-            }
-          }
-          steps{
-            container("maven"){
-              // Run maven
-              unstash "artifactStash"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd qa/test-db-upgrade && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU verify -Pupgrade-db,postgresql ${POSTGRES_DB_CONFIG}
-                """
-              }
-            }
-          }
-        }
         stage('QA: Upgrade database from 7.13 - MariaDB 10.2') {
           agent {
             kubernetes {
@@ -1274,25 +1092,6 @@ pipeline{
           agent {
             kubernetes {
               yaml getMavenAgent() + getSqlServerAgent(MSSQL_17)
-            }
-          }
-          steps{
-            container("maven"){
-              // Run maven
-              unstash "artifactStash"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd qa/test-db-upgrade && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU verify -Pupgrade-db,sqlserver ${SQLSERVER_DB_CONFIG}
-                """
-              }
-            }
-          }
-        }
-        stage('QA: Upgrade database from 7.13 - MS-SQL 2019') {
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getSqlServerAgent(MSSQL_19)
             }
           }
           steps{
@@ -1601,53 +1400,6 @@ pipeline{
             }
           }
         }
-        stage('Webapp - PostgreSQL 12.2') {
-          when {
-            anyOf {
-              branch 'hackdays-master';
-              allOf {
-                changeRequest();
-                expression {
-                  pullRequest.labels.contains('postgresql')
-                }
-              }
-            }
-          }
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getPostgresAgent(PG_122)
-            }
-          }
-          stages {
-            stage('Webapp UNIT tests') {
-              steps {
-                container("maven") {
-                  // Run maven
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,postgresql ${POSTGRES_DB_CONFIG} -Dskip.frontend.build=true -B
-                    """
-                  }
-                }
-              }
-            }
-            stage('Webapp UNIT: Authorizations tests') {
-              steps {
-                container("maven") {
-                  // Run maven
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,postgresql,cfgAuthorizationCheckRevokesAlways ${POSTGRES_DB_CONFIG} -Dskip.frontend.build=true -B
-                    """
-                  }
-                }
-              }
-            }
-          }
-        }
         stage('Webapp - MariaDB 10.2') {
           when {
             anyOf {
@@ -1757,53 +1509,6 @@ pipeline{
           agent {
             kubernetes {
               yaml getMavenAgent() + getSqlServerAgent(MSSQL_17)
-            }
-          }
-          stages {
-            stage('Webapp UNIT tests') {
-              steps {
-                container("maven") {
-                  // Run maven
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,sqlserver ${SQLSERVER_DB_CONFIG} -Dskip.frontend.build=true -B
-                    """
-                  }
-                }
-              }
-            }
-            stage('Webapp UNIT: Authorizations tests') {
-              steps {
-                container("maven") {
-                  // Run maven
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,sqlserver,cfgAuthorizationCheckRevokesAlways ${SQLSERVER_DB_CONFIG} -Dskip.frontend.build=true -B
-                    """
-                  }
-                }
-              }
-            }
-          }
-        }
-        stage('Webapp - MS-SQL 2019') {
-          when {
-            anyOf {
-              branch 'hackdays-master';
-              allOf {
-                changeRequest();
-                expression {
-                  pullRequest.labels.contains('sqlserver')
-                }
-              }
-            }
-          }
-          agent {
-            kubernetes {
-              yaml getMavenAgent() + getSqlServerAgent(MSSQL_19)
             }
           }
           stages {
