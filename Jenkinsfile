@@ -56,7 +56,6 @@ String getChromeAgent(Integer cpuLimit = 1){
         memory: ${memoryLimit}Gi
   """
 }
-
 String getPostgresAgent(String dockerTag = '9.6.18', Integer cpuLimit = 1){
   String memoryLimit = cpuLimit * 2;
   """
@@ -103,7 +102,6 @@ String getMariaDbAgent(String dockerTag = '10.2', Integer cpuLimit = 1){
         memory: ${memoryLimit}Gi
   """
 }
-
 
 pipeline{
   agent none
@@ -1011,34 +1009,6 @@ pipeline{
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
                       cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,mariadb,cfgAuthorizationCheckRevokesAlways ${MARIADB_DB_CONFIG} -Dskip.frontend.build=true -B
-                    """
-                  }
-                }
-              }
-            }
-          }
-        }
-          stages {
-            stage('Webapp UNIT tests') {
-              steps {
-                container("maven") {
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,mysql ${MYSQL_DB_CONFIG} -Dskip.frontend.build=true -B
-                    """
-                  }
-                }
-              }
-            }
-            stage('Webapp UNIT: Authorizations tests') {
-              steps {
-                container("maven") {
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML test -Pdatabase,mysql,cfgAuthorizationCheckRevokesAlways ${MYSQL_DB_CONFIG} -Dskip.frontend.build=true -B
                     """
                   }
                 }
