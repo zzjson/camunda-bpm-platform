@@ -4,36 +4,17 @@ String POSTGRES_DB_CONFIG = '-Ddatabase.url=jdbc:postgresql://localhost:5432/pro
 String MARIADB_DB_CONFIG = '-Ddatabase.url=jdbc:mariadb://localhost:3306/process-engine -Ddatabase.username=camunda -Ddatabase.password=camunda'
 String MYSQL_DB_CONFIG = '-Ddatabase.url=jdbc:mysql://localhost:3306/process-engine -Ddatabase.username=camunda -Ddatabase.password=camunda'
 String SQLSERVER_DB_CONFIG = '-Ddatabase.url=jdbc:sqlserver://localhost:1433;DatabaseName=master -Ddatabase.username=sa -Ddatabase.password=cambpm-123#'
-String DB2_DB_CONFIG = '-Ddatabase.url=jdbc:db2://localhost:50000/engine -Ddatabase.username=camunda -Ddatabase.password=camunda'
-String ORACLE_DB_CONFIG = '-Ddatabase.url=jdbc:oracle:thin:@localhost:1521:xe -Ddatabase.username=camunda -Ddatabase.password=camunda'
 
-// tags obtained from: https://hub.docker.com/_/postgres?tab=tags
 String PG_96 = '9.6.18'
-String PG_94 = '9.4.26'
-String PG_104 = '10.4'
-String PG_107 = '10.7'
-String PG_111 = '11.1'
-String PG_112 = '11.2'
-String PG_122 = '12.2'
 
-// tags obtained from: https://hub.docker.com/_/mariadb?tab=tags
-String MDB_100 = '10.0.38'
 String MDB_102 = '10.2.33'
-String MDB_103 = '10.3.24'
 
-// tags obtained from: https://hub.docker.com/_/mysql
-// we only test MySQL 5.7
 String MYSQL_57 = '5.7.31'
 
-// added only versions supported by docker images (we also support 2012, 2014 and 2016)
-// check: https://hub.docker.com/_/microsoft-mssql-server
 String MSSQL_17 = '2017-latest'
-String MSSQL_19 = '2019-latest'
 
 String getMavenAgent(Integer mavenCpuLimit = 4, String dockerTag = '3.6.3-openjdk-8'){
-  // assuming one core left for main maven thread
   String mavenForkCount = mavenCpuLimit;
-  // assuming 2Gig for each core
   String mavenMemoryLimit = mavenCpuLimit * 2;
   """
 metadata:
@@ -65,9 +46,7 @@ spec:
         memory: ${mavenMemoryLimit}Gi
   """
 }
-
 String getChromeAgent(Integer cpuLimit = 1){
-  // assuming 2Gig for each core
   String memoryLimit = cpuLimit * 2;
   """
   - name: chrome
@@ -88,7 +67,6 @@ String getChromeAgent(Integer cpuLimit = 1){
 }
 
 String getPostgresAgent(String dockerTag = '9.6.18', Integer cpuLimit = 1){
-  // assuming 2Gig for each core
   String memoryLimit = cpuLimit * 2;
   """
   - name: postgres
@@ -111,9 +89,7 @@ String getPostgresAgent(String dockerTag = '9.6.18', Integer cpuLimit = 1){
         memory: ${memoryLimit}Gi
   """
 }
-
 String getMariaDbAgent(String dockerTag = '10.2', Integer cpuLimit = 1){
-  // assuming 2Gig for each core
   String memoryLimit = cpuLimit * 2;
   """
   - name: mariadb
@@ -136,9 +112,7 @@ String getMariaDbAgent(String dockerTag = '10.2', Integer cpuLimit = 1){
         memory: ${memoryLimit}Gi
   """
 }
-
 String getMySqlAgent(String dockerTag = '5.7.31', Integer cpuLimit = 1){
-  // assuming 2Gig for each core
   String memoryLimit = cpuLimit * 2;
   """
   - name: mysql
@@ -161,38 +135,7 @@ String getMySqlAgent(String dockerTag = '5.7.31', Integer cpuLimit = 1){
         memory: ${memoryLimit}Gi
   """
 }
-
-String getDb2Agent(String dockerTag = '11.5.0.0', Integer cpuLimit = 1){
-  // camunda registry: registry.camunda.cloud/team-cambpm/camunda-ci-db2:10.5 or 11.1
-  // assuming 2Gig for each core
-  String memoryLimit = cpuLimit * 2;
-  """
-  - name: ibmcom/db2
-    image: ibmcom/db2:${dockerTag}
-    env:
-    - name: TZ
-      value: Europe/Berlin
-    - name: LICENSE
-      value: accept
-    - name: DBNAME
-      value: engine
-    - name: DB2INSTANCE
-      value: camunda
-    - name: DB2INST1_PASSWORD
-      value: camunda
-    resources:
-      limits:
-        cpu: ${cpuLimit}
-        memory: ${memoryLimit}Gi
-      requests:
-        cpu: ${cpuLimit}
-        memory: ${memoryLimit}Gi
-  """
-}
-
 String getSqlServerAgent(String dockerTag = '2017-latest', Integer cpuLimit = 1){
-  // camunda registry: registry.camunda.cloud/team-cambpm/camunda-ci-sqlserver:2012 or 2014
-  // assuming 2Gig for each core
   String memoryLimit = cpuLimit * 2;
   """
   - name: mcr.microsoft.com/mssql/server
@@ -212,37 +155,6 @@ String getSqlServerAgent(String dockerTag = '2017-latest', Integer cpuLimit = 1)
         cpu: ${cpuLimit}
         memory: ${memoryLimit}Gi
   """
-}
-
-String getOracleAgent(String dockerTag = '18', Integer cpuLimit = 1){
-  // only OracleDB 18c is available on the Camunda registry
-  // assuming 2Gig for each core
-  String memoryLimit = cpuLimit * 2;
-  """
-  - name: registry.camunda.cloud/team-cambpm/camunda-ci-oracle
-    image: registry.camunda.cloud/team-cambpm/camunda-ci-oracle:${dockerTag}
-    env:
-    - name: TZ
-      value: Europe/Berlin
-    resources:
-      limits:
-        cpu: ${cpuLimit}
-        memory: ${memoryLimit}Gi
-      requests:
-        cpu: ${cpuLimit}
-        memory: ${memoryLimit}Gi
-  """
-}
-
-List getDb2SupportedVersions() {
-  // there are currently no public docker images that we support
-  // check: https://hub.docker.com/r/ibmcom/db2/tags?page=1
-  return [/*"10.5", "11.1"*/];
-}
-
-List getOracleSupportedVersions() {
-  // there are currently no public docker images
-  return ["11g", "12c", "18c", "19c"];
 }
 
 pipeline{
@@ -379,25 +291,6 @@ pipeline{
                   // Run maven
                   unstash "artifactStash"
                   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    //sh """
-                    //  errors=0
-                    //
-                    //  for create_script in engine/src/main/resources/org/camunda/bpm/engine/db/create/*.sql; do
-                    //      drop_script=${create_script//create/drop}
-                    //      created_indexes=$(grep -i '^\s*create \(unique \)\?index' $create_script | tr [A-Z] [a-z] | sed 's/^\s*create \(unique \)\?index \(\S\+\).*$/\2/' | sort)
-                    //      dropped_indexes=$(grep -i '^\s*drop index' $drop_script | tr [A-Z] [a-z] | sed 's/^\s*drop index \([^.]\+\.\)\?\([^ ;]\+\).*$/\2/' | sort)
-                    //      diff_indexes=$(diff <(echo \'$created_indexes\') <(echo \'$dropped_indexes\'))
-                    //      if [ $? -ne 0 ]; then
-                    //          echo 'Found index difference for:'
-                    //          echo $create_script
-                    //          echo $drop_script
-                    //          echo -e \'${diff_indexes}\n\'
-                    //          errors=$[errors + 1]
-                    //      fi
-                    //  done
-                    //
-                    //  exit $errors
-                    //"""
                     sh """
                       export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
                       cd distro/sql-script && mvn -s \$MAVEN_SETTINGS_XML -B install -Pcheck-sql,h2
@@ -1745,7 +1638,6 @@ pipeline{
         }
       }
     }
-
     stage("Webapp IT"){
       agent {
         kubernetes {
@@ -1795,46 +1687,6 @@ pipeline{
             }
           }
         }
-//        stage('webapp-IT-wildfly-h2') {
-//          steps {
-//            container("maven") {
-//              // Run maven
-//              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-//                sh """
-//                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-//                  cd qa && mvn -s \$MAVEN_SETTINGS_XML install -Pwildfly,h2,webapps-integration -B
-//                """
-//              }
-//            }
-//          }
-//        }
-//        stage('webapp-IT-standalone-wildfly') {
-//          steps {
-//            container("maven") {
-//              // Run maven
-//              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-//                sh """
-//                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-//                  cd qa && mvn -s \$MAVEN_SETTINGS_XML install -Pwildfly-vanilla,webapps-integration-sa -B
-//                """
-//              }
-//            }
-//          }
-//        }
-//        stage('Webapps Rest IT: Embedded Wildfly tests') {
-//          steps {
-//            container("maven") {
-//              // Run maven
-//              unstash "artifactStash"
-//              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-//                sh """
-//                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-//                  cd qa/ && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU verify -Pwildfly,h2,webapps-integration,embedded-engine-rest -B
-//                """
-//              }
-//            }
-//          }
-//        }
       }
     }
     stage("Webapp IT spring"){
