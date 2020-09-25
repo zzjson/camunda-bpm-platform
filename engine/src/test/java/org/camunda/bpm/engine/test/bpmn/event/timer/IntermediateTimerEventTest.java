@@ -33,9 +33,11 @@ import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.JobQuery;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.runtime.ProcessInstanceWithVariables;
+import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.joda.time.LocalDateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -239,6 +241,22 @@ public class IntermediateTimerEventTest extends PluggableProcessEngineTest {
     taskService.complete(taskId);
 
     testRule.assertProcessEnded(processInstanceId);
+  }
+
+  // Created to help investigate CAM-12501
+  @Ignore
+  @Deployment
+  @Test
+  public void failing_shouldNotFireEndListener() {
+    // given
+    String processInstanceId = runtimeService.startProcessInstanceByKey("process").getId();
+    Task userTask = taskService.createTaskQuery().singleResult();
+    
+    // when
+    taskService.complete(userTask.getId());
+
+    // then
+    // End ExecutionListener of timer fires although the timer should not have ended yet
   }
   
   private void moveByMinutes(int minutes) throws Exception {

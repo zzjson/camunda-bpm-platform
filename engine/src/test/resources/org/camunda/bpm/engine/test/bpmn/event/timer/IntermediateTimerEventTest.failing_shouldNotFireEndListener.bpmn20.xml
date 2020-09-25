@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions id="definitions" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+             targetNamespace="Examples">
+
+  <process id="process" name="Conditional Timer Process" isExecutable="true">
+  
+    <startEvent id="start" />
+
+    <sequenceFlow id="SequenceFlow_0ptlhix" sourceRef="start" targetRef="userTask" />
+
+    <userTask id="userTask" />
+
+    <sequenceFlow id="SequenceFlow_0dobx31" sourceRef="userTask" targetRef="end1" />
+
+    <endEvent id="end1" name="End">
+      <terminateEventDefinition />
+    </endEvent>
+
+    <boundaryEvent id="boundaryEvent" cancelActivity="false" attachedToRef="userTask">
+      <conditionalEventDefinition id="ConditionalEventDefinition_1rjv9j5">
+        <condition>${true}</condition>
+      </conditionalEventDefinition>
+    </boundaryEvent>
+
+    <sequenceFlow id="SequenceFlow_0ne9gor" sourceRef="boundaryEvent" targetRef="timerEvent" />
+
+    <intermediateCatchEvent id="timerEvent">
+      <extensionElements>
+        <camunda:executionListener delegateExpression="${FakeProcessService.throwException()}" event="end" />
+      </extensionElements>
+      <timerEventDefinition>
+        <timeDate>2500-03-11T12:13:14Z</timeDate>
+      </timerEventDefinition>
+    </intermediateCatchEvent>
+
+    <sequenceFlow id="SequenceFlow_0vcy65c" sourceRef="timerEvent" targetRef="end2" />
+
+    <endEvent id="end2" />
+  </process>
+
+
+</definitions>
