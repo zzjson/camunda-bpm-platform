@@ -68,7 +68,7 @@ pipeline {
       }
     }
     stage('h2 tests') {
-      failfast true
+      // failfast true
       parallel {
         stage('Engine UNIT & Authorization tests - H2') {
           agent {
