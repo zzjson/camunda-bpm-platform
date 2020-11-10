@@ -54,13 +54,13 @@ pipeline {
             java -version
             # Install dependencies
             curl -s -O https://deb.nodesource.com/node_14.x/pool/main/n/nodejs/nodejs_14.6.0-1nodesource1_amd64.deb
-            dpkg -i nodejs_14.6.0-1nodesource1_amd64.deb
-            npm set unsafe-perm true
-            apt -qq update && apt install -y g++ make
+            # dpkg -i nodejs_14.6.0-1nodesource1_amd64.deb
+            # npm set unsafe-perm true
+            # apt -qq update && apt install -y g++ make
           '''
           configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
             sh """
-              mvn -s \$MAVEN_SETTINGS_XML -T\$LIMITS_CPU clean source:jar install -D skipTests -Dmaven.repo.local=\$(pwd)/.m2  -B
+              mvn -s \$MAVEN_SETTINGS_XML -T\$LIMITS_CPU clean source:jar -pl '!webapps' install -D skipTests -Dmaven.repo.local=\$(pwd)/.m2  -B
             """
           }
           stash name: "platform-stash", includes: ".m2/org/camunda/bpm/**/*-SNAPSHOT/**", excludes: "**/*.zip,**/*.tar.gz"
@@ -68,9 +68,9 @@ pipeline {
       }
     }
     stage('h2 tests') {
-      // failfast true
+      // failFast true
       parallel {
-        stage('Engine UNIT & Authorization tests - H2') {
+        stage('Engine UNIT') {
           agent {
             kubernetes {
               yaml getMavenAgent(16)
