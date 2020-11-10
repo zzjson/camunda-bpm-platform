@@ -70,24 +70,38 @@ pipeline {
     stage('h2 tests') {
       // failFast true
       parallel {
-        stage('Engine UNIT') {
+        stage('engine-UNIT-h2') {
           agent {
             kubernetes {
               yaml getMavenAgent(16)
             }
           }
-          stages {
-            stage('engine-UNIT-h2') {
-              steps{
-                container("maven"){
-                  unstash "artifactStash"
-                  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh """
-                      export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                      cd engine && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU test -Pdatabase,h2
-                    """
-                  }
-                }
+          steps{
+            container("maven"){
+              unstash "platform-stash"
+              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                sh """
+                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
+                  cd engine && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU test -Pdatabase,h2
+                """
+              }
+            }
+          }
+        }
+        stage('engine-UNIT-authorizations-h2') {
+          agent {
+            kubernetes {
+              yaml getMavenAgent(16)
+            }
+          }
+          steps{
+            container("maven"){
+              unstash "platform-stash"
+              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                sh """
+                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
+                  cd engine && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU test -Pdatabase,h2,cfgAuthorizationCheckRevokesAlways
+                """
               }
             }
           }
