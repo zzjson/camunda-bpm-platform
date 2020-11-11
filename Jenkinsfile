@@ -63,7 +63,9 @@ pipeline {
               mvn -s \$MAVEN_SETTINGS_XML -T\$LIMITS_CPU clean install source:jar -Pdistro,distro-ce,distro-wildfly,distro-webjar -DskipTests -Dmaven.repo.local=\$(pwd)/.m2 com.mycila:license-maven-plugin:check -B
             """
           }
-          stash name: "platform-stash", includes: ".m2/org/camunda/bpm/**/*-SNAPSHOT/**", excludes: "**/*.zip,**/*.tar.gz"
+          stash name: "platform-stash-runtime", includes: ".m2/org/camunda/bpm/**/*-SNAPSHOT/**", excludes: "**/qa/**,**/*qa*/**,**/*.zip,**/*.tar.gz"
+          stash name: "platform-stash-qa", includes: ".m2/org/camunda/bpm/**/qa/**/*-SNAPSHOT/**,.m2/org/camunda/bpm/**/*qa*/**/*-SNAPSHOT/**", excludes: "**/*.zip,**/*.tar.gz"
+          stash name: "platform-stash-distro", includes: ".m2/org/camunda/bpm/**/*-SNAPSHOT/**/*.zip,.m2/org/camunda/bpm/**/*-SNAPSHOT/**/*.tar.gz"
         }
       }
     }
@@ -78,7 +80,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash"
+              unstash "platform-stash-runtime"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -96,7 +98,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash"
+              unstash "platform-stash-runtime"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -114,7 +116,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash"
+              unstash "platform-stash-runtime"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -132,11 +134,29 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash"
+              unstash "platform-stash-runtime"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
                   cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML clean test -Pdatabase,h2 -Dskip.frontend.build=true -B
+                """
+              }
+            }
+          }
+        }
+        stage('engine-IT-tomcat-9-h2') {// TODO change it to `postgresql-96`
+          agent {
+            kubernetes {
+              yaml getMavenAgent()
+            }
+          }
+          steps{
+            container("maven"){
+              unstash "platform-stash-runtime"
+              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                sh """
+                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
+                  cd qa/ && mvn -s \$MAVEN_SETTINGS_XML clean install -Ptomcat,h2,engine-integration -B
                 """
               }
             }
@@ -155,7 +175,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash"
+              unstash "platform-stash-runtime"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -173,7 +193,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash"
+              unstash "platform-stash-runtime"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -191,7 +211,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash"
+              unstash "platform-stash-runtime"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
@@ -209,7 +229,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash"
+              unstash "platform-stash-runtime"
               configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
                // sh """
               //    export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
