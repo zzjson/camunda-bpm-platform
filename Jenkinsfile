@@ -161,6 +161,11 @@ pipeline {
               }
             }
           }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
         }
       }
     }
