@@ -181,7 +181,6 @@ pipeline {
               }
             }
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-              sh "exit 1"
             }
           }
           post {
@@ -208,7 +207,6 @@ pipeline {
               }
             }
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-              sh "exit 1"
             }
           }
 
