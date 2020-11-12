@@ -92,7 +92,17 @@ pipeline {
     stage('h2 tests') {
       parallel {
         stage('engine-UNIT-h2') {
-          withLabels('h2')
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('h2-db')
+                }
+              }
+            }
+          }
           agent {
             kubernetes {
               yaml getMavenAgent(16)
@@ -105,7 +115,17 @@ pipeline {
           }
         }
         stage('engine-UNIT-authorizations-h2') {
-          withLabels('h2')
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('h2-db')
+                }
+              }
+            }
+          }
           agent {
             kubernetes {
               yaml getMavenAgent(16)
@@ -118,7 +138,17 @@ pipeline {
           }
         }
         stage('engine-rest-UNIT-jersey-2') {
-          withLabels('rest-api')
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('rest')
+                }
+              }
+            }
+          }
           agent {
             kubernetes {
               yaml getMavenAgent()
@@ -131,7 +161,17 @@ pipeline {
           }
         }
         stage('engine-rest-UNIT-resteasy3') {
-          withLabels('rest-api')
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('rest')
+                }
+              }
+            }
+          }
           agent {
             kubernetes {
               yaml getMavenAgent()
@@ -144,7 +184,17 @@ pipeline {
           }
         }
         stage('webapp-UNIT-h2') {
-          withLabels('webapp')
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('webapp')
+                }
+              }
+            }
+          }
           agent {
             kubernetes {
               yaml getMavenAgent()
@@ -157,7 +207,17 @@ pipeline {
           }
         }
         stage('engine-IT-tomcat-9-h2') {// TODO change it to `postgresql-96`
-          withLabels('IT')
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('IT')
+                }
+              }
+            }
+          }
           agent {
             kubernetes {
               yaml getMavenAgent()
@@ -165,10 +225,9 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, true, 'qa/', 'clean install -Ptomcat,h2,engine-integration')
-            }
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-              exit 0
+              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                runMaven(true, true, 'qa/', 'clean install -Ptomcat,h2,engine-integration')
+              }
             }
           }
           post {
@@ -178,7 +237,17 @@ pipeline {
           }
         }
         stage('webapp-IT-tomcat-9-h2') {
-          withLabels('webapp')
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('webapp', 'IT')
+                }
+              }
+            }
+          }
           agent {
             kubernetes {
               yaml getMavenAgent() + getChromeAgent()
@@ -192,9 +261,24 @@ pipeline {
               exit 0
             }
           }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
         }
         stage('webapp-IT-standalone-wildfly') {
-          withLabels('webapp')
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('webapp', 'IT')
+                }
+              }
+            }
+          }
           agent {
             kubernetes {
               yaml getMavenAgent() + getChromeAgent()
@@ -202,10 +286,9 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, true,'qa/', 'clean install -Pwildfly-vanilla,webapps-integration-sa')
-            }
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-              exit 0
+              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                runMaven(true, true,'qa/', 'clean install -Pwildfly-vanilla,webapps-integration-sa')
+              }
             }
           }
         }
@@ -257,14 +340,6 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-               // sh """
-              //    export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-              //    mvn -s \$MAVEN_SETTINGS_XML -T\$LIMITS_CPU clean source:jar -pl '!webapps' install -D skipTests -Dmaven.repo.local=\$(pwd)/.m2 com.mycila:license-maven-plugin:check -B
-              //  """
-              }
-              // stash name: "platform-stash", includes: ".m2/org/camunda/bpm/**/*-SNAPSHOT/**", excludes: "**/*.zip,**/*.tar.gz"
             }
           }
         }
@@ -297,17 +372,7 @@ void runMaven(boolean runtimeStash, boolean distroStash, String directory, Strin
   }
 }
 void withLabels(String... labels) {
-  when {
-    anyOf {
-      branch 'hackdays-ya';
-      allOf {
-        changeRequest();
-        expression {
-          for ( l in labels) {
-            pullRequest.labels.contains(labelName)
-          }
-        }
-      }
-    }
+  for ( l in labels) {
+    pullRequest.labels.contains(labelName)
   }
 }
