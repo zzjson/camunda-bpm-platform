@@ -99,13 +99,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd engine && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU test -Pdatabase,h2
-                """
-              }
+              runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2')
             }
           }
         }
@@ -117,13 +111,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd engine && mvn -s \$MAVEN_SETTINGS_XML -B -T\$LIMITS_CPU test -Pdatabase,h2,cfgAuthorizationCheckRevokesAlways
-                """
-              }
+              runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2,cfgAuthorizationCheckRevokesAlways')
             }
           }
         }
@@ -135,13 +123,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd engine-rest/engine-rest/ && mvn -s \$MAVEN_SETTINGS_XML clean install -Pjersey2 -B
-                """
-              }
+              runMaven(true, false,'engine-rest/engine-rest/', 'clean install -Pjersey2')
             }
           }
         }
@@ -153,13 +135,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML clean test -Pdatabase,h2 -Dskip.frontend.build=true -B
-                """
-              }
+              runMaven(true, false,'webapps/', 'clean test -Pdatabase,h2 -Dskip.frontend.build=true')
             }
           }
         }
@@ -225,13 +201,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd engine && mvn -s \$MAVEN_SETTINGS_XML clean verify -Pcheck-api-compatibility -B
-                """
-              }
+              runMaven(true, false,'engine/', 'clean verify -Pcheck-api-compatibility')
             }
           }
         }
@@ -243,13 +213,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd engine && mvn -s \$MAVEN_SETTINGS_XML clean verify -Pcheck-api-compatibility -B
-                """
-              }
+              runMaven(true, false,'engine/', 'clean test -Pcheck-plugins')
             }
           }
         }
@@ -261,13 +225,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                   cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML clean test -Pdb-table-prefix -Dskip.frontend.build=true -B
-                """
-              }
+              runMaven(true, false,'webapps/', 'clean test -Pdb-table-prefix')
             }
           }
         }
