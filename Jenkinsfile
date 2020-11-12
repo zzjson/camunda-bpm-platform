@@ -110,7 +110,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2')
+              //runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2')
             }
           }
         }
@@ -133,7 +133,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2,cfgAuthorizationCheckRevokesAlways')
+              //runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2,cfgAuthorizationCheckRevokesAlways')
             }
           }
         }
@@ -291,6 +291,31 @@ pipeline {
             }
           }
         }
+        stage('camunda-run-IT') {
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('webapp', 'run')
+                }
+              }
+            }
+          }
+          agent {
+            kubernetes {
+              yaml getMavenAgent() + getChromeAgent()
+            }
+          }
+          steps{
+            container("maven"){
+              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                runMaven(true, true,'qa/', 'clean install -Pwildfly-vanilla,webapps-integration-sa')
+              }
+            }
+          }
+        }
       }
     }
     stage('db tests + CE webapps IT + EE platform') {
@@ -327,7 +352,9 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, false,'webapps/', 'clean test -Pdb-table-prefix')
+              nodejs('nodejs-14.6.0'){
+                runMaven(true, false,'webapps/', 'clean test -Pdb-table-prefix')
+              }
             }
           }
         }
