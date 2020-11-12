@@ -183,7 +183,7 @@ pipeline {
             }
           }
         }
-        stage('webapp-IT-tomcat-9-h2') {// TODO change it to `postgresql-96`
+        stage('webapp-IT-tomcat-9-h2') {
           agent {
             kubernetes {
               yaml getMavenAgent() + getChromeAgent()
@@ -192,6 +192,21 @@ pipeline {
           steps{
             container("maven"){
               runMaven(true, true,'qa/', 'clean install -Ptomcat,h2,webapps-integration')
+            }
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              exit 0
+            }
+          }
+        }
+        stage('webapp-IT-standalone-wildfly') {
+          agent {
+            kubernetes {
+              yaml getMavenAgent() + getChromeAgent()
+            }
+          }
+          steps{
+            container("maven"){
+              runMaven(true, true,'qa/', 'clean install -Pwildfly-vanilla,webapps-integration-sa')
             }
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
               exit 0
