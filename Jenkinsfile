@@ -110,7 +110,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2')
+              // runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2')
             }
           }
         }
@@ -133,7 +133,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2,cfgAuthorizationCheckRevokesAlways')
+              //runMaven(true, false,'engine/', '-T\$LIMITS_CPU test -Pdatabase,h2,cfgAuthorizationCheckRevokesAlways')
             }
           }
         }
@@ -255,10 +255,9 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, true,'qa/', 'clean install -Ptomcat,h2,webapps-integration')
-            }
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-              exit 0
+              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                runMaven(true, true,'qa/', 'clean install -Ptomcat,h2,webapps-integration')
+              }
             }
           }
           post {
