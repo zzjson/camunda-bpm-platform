@@ -171,7 +171,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, true, 'clean install -Ptomcat,h2,engine-integration')
+              runMaven(true, true, 'qa/', 'clean install -Ptomcat,h2,engine-integration')
             }
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
               exit 0
@@ -191,7 +191,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              runMaven(true, true, 'install -Ptomcat,h2,webapps-integration')
+              runMaven(true, true,'qa/', 'clean install -Ptomcat,h2,webapps-integration')
             }
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
               exit 0
@@ -296,10 +296,10 @@ pipeline {
   }
 }
 
-void runMaven(boolean runtimeStash, boolean distroStash, String cmd) {
+void runMaven(boolean runtimeStash, boolean distroStash, String directory, String cmd) {
   if (runtimeStash) unstash "platform-stash-runtime"
   if (distroStash) unstash "platform-stash-distro"
   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-    sh("export MAVEN_OPTS='-Dmaven.repo.local=\$(pwd)/.m2' && cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML ${cmd} -B")
+    sh("export MAVEN_OPTS='-Dmaven.repo.local=\$(pwd)/.m2' && cd ${directory} && mvn -s \$MAVEN_SETTINGS_XML ${cmd} -B")
   }
 }
