@@ -310,7 +310,7 @@ pipeline {
           steps{
             container("maven"){
               catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                runMaven(true, true,'qa/', 'clean install -Pwildfly-vanilla,webapps-integration-sa')
+                runMaven(true, true,'distro/run/', 'clean install -Pintegration-test-camunda-run')
               }
             }
           }
