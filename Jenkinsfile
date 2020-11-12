@@ -171,14 +171,7 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              unstash "platform-stash-distro"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd qa/ && mvn -s \$MAVEN_SETTINGS_XML clean install -Ptomcat,h2,engine-integration -B
-                """
-              }
+              runMaven(true, true, 'clean install -Ptomcat,h2,engine-integration')
             }
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
             }
@@ -197,19 +190,11 @@ pipeline {
           }
           steps{
             container("maven"){
-              unstash "platform-stash-runtime"
-              unstash "platform-stash-distro"
-              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                sh """
-                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
-                  cd qa/ && mvn -s \$MAVEN_SETTINGS_XML install -Ptomcat,h2,webapps-integration -B
-                """
-              }
+              runMaven(true, true, 'install -Ptomcat,h2,webapps-integration')
             }
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
             }
           }
-
         }
       }
     }
@@ -292,19 +277,27 @@ pipeline {
     }
   }
   post {
-  changed {
-    script {
-      if (!agentDisconnected()){ 
-        // send email if the slave disconnected
+    changed {
+      script {
+        if (!agentDisconnected()){ 
+          // send email if the slave disconnected
+        }
       }
     }
-  }
-  always {
-    script {
-      if (agentDisconnected()) {// Retrigger the build if the slave disconnected
-        build job: currentBuild.projectName, propagate: false, quietPeriod: 60, wait: false
+    always {
+      script {
+        if (agentDisconnected()) {// Retrigger the build if the slave disconnected
+          build job: currentBuild.projectName, propagate: false, quietPeriod: 60, wait: false
+        }
       }
     }
   }
 }
-} 
+
+void runMaven(boolean runtimeStash, boolean distroStash, String cmd) {
+  if (runtimeStash) unstash "platform-stash-runtime"
+  if (distroStash) unstash "platform-stash-distro"
+  configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
+    sh("export MAVEN_OPTS='-Dmaven.repo.local=\$(pwd)/.m2' && cd webapps/ && mvn -s \$MAVEN_SETTINGS_XML ${cmd} -B")
+  }
+}
