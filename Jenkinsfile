@@ -70,7 +70,6 @@ pipeline {
       steps {
         container("maven"){
           sh '''
-            mvn --version
             java -version
             # Install dependencies
             curl -s -O https://deb.nodesource.com/node_14.x/pool/main/n/nodejs/nodejs_14.6.0-1nodesource1_amd64.deb
@@ -352,9 +351,15 @@ pipeline {
           }
           steps{
             container("maven"){
-              nodejs('nodejs-14.6.0'){
-                runMaven(true, false,'webapps/', 'clean test -Pdb-table-prefix')
-              }
+              sh '''
+                java -version
+                # Install dependencies
+                curl -s -O https://deb.nodesource.com/node_14.x/pool/main/n/nodejs/nodejs_14.6.0-1nodesource1_amd64.deb
+                dpkg -i nodejs_14.6.0-1nodesource1_amd64.deb
+                npm set unsafe-perm true
+                apt -qq update && apt install -y g++ make
+              '''
+              runMaven(true, false,'webapps/', 'clean test -Pdb-table-prefix')
             }
           }
         }
