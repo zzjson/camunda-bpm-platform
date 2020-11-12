@@ -174,6 +174,7 @@ pipeline {
               runMaven(true, true, 'clean install -Ptomcat,h2,engine-integration')
             }
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              exit 0
             }
           }
           post {
@@ -193,6 +194,7 @@ pipeline {
               runMaven(true, true, 'install -Ptomcat,h2,webapps-integration')
             }
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              exit 0
             }
           }
         }
