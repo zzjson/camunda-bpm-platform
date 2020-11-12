@@ -37,6 +37,26 @@ spec:
   """
 }
 
+String getChromeAgent(Integer cpuLimit = 1){
+  String memoryLimit = cpuLimit * 2;
+  """
+  - name: chrome
+    image: 'gcr.io/ci-30-162810/chrome:78v0.1.2'
+    command: ["cat"]
+    tty: true
+    env:
+    - name: TZ
+      value: Europe/Berlin
+    resources:
+      limits:
+        cpu: ${cpuLimit}
+        memory: ${memoryLimit}Gi
+      requests:
+        cpu: ${cpuLimit}
+        memory: ${memoryLimit}Gi
+  """
+}
+
 
 pipeline {
   agent none
@@ -157,6 +177,33 @@ pipeline {
                 sh """
                   export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
                   cd qa/ && mvn -s \$MAVEN_SETTINGS_XML clean install -Ptomcat,h2,engine-integration -B
+                """
+              }
+            }
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              sh "exit 1"
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
+        }
+        stage('webapp-IT-tomcat-9-h2') {// TODO change it to `postgresql-96`
+          agent {
+            kubernetes {
+              yaml getMavenAgent() + getChromeAgent()
+            }
+          }
+          steps{
+            container("maven"){
+              unstash "platform-stash-runtime"
+              unstash "platform-stash-distro"
+              configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                sh """
+                  export MAVEN_OPTS="-Dmaven.repo.local=\$(pwd)/.m2"
+                  cd qa/ && mvn -s \$MAVEN_SETTINGS_XML install -Ptomcat,h2,webapps-integration -B
                 """
               }
             }
