@@ -130,6 +130,19 @@ pipeline {
             }
           }
         }
+        stage('engine-rest-UNIT-resteasy3') {
+          withLabels('rest-api')
+          agent {
+            kubernetes {
+              yaml getMavenAgent()
+            }
+          }
+          steps{
+            container("maven"){
+              runMaven(true, false,'engine-rest/engine-rest/', 'clean install -Presteasy3')
+            }
+          }
+        }
         stage('webapp-UNIT-h2') {
           withLabels('webapp')
           agent {
@@ -283,14 +296,16 @@ void runMaven(boolean runtimeStash, boolean distroStash, String directory, Strin
     sh("export MAVEN_OPTS='-Dmaven.repo.local=\$(pwd)/.m2' && cd ${directory} && mvn -s \$MAVEN_SETTINGS_XML ${cmd} -B")
   }
 }
-void withLabels(String labelName) {
+void withLabels(String... labels) {
   when {
     anyOf {
       branch 'hackdays-ya';
       allOf {
         changeRequest();
         expression {
-          pullRequest.labels.contains(labelName)
+          for ( l in labels) {
+            pullRequest.labels.contains(labelName)
+          }
         }
       }
     }
