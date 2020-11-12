@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 // https://github.com/camunda/jenkins-global-shared-library
-// @Library('camunda-ci') _
+@Library('camunda-ci') _
 
 String getMavenAgent(Integer mavenCpuLimit = 4, String dockerTag = '3.6.3-openjdk-8'){
   String mavenForkCount = mavenCpuLimit;
@@ -211,11 +211,7 @@ pipeline {
               sh "exit 1"
             }
           }
-          post {
-            always {
-              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
-            }
-          }
+
         }
       }
     }
@@ -297,4 +293,20 @@ pipeline {
       }
     }
   }
+  post {
+  changed {
+    script {
+      if (!agentDisconnected()){ 
+        // send email if the slave disconnected
+      }
+    }
+  }
+  always {
+    script {
+      if (agentDisconnected()) {// Retrigger the build if the slave disconnected
+        build job: currentBuild.projectName, propagate: false, quietPeriod: 60, wait: false
+      }
+    }
+  }
+}
 } 
