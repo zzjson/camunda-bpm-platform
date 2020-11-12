@@ -297,7 +297,7 @@ pipeline {
               allOf {
                 changeRequest();
                 expression {
-                  withLabels('webapp', 'run')
+                  withLabels('webapp', 'run', 'spring-boot')
                 }
               }
             }
@@ -312,6 +312,41 @@ pipeline {
               catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                 runMaven(true, true,'distro/run/', 'clean install -Pintegration-test-camunda-run')
               }
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
+            }
+          }
+        }
+        stage('spring-boot-starter-IT') {
+          when {
+            anyOf {
+              branch 'hackdays-ya';
+              allOf {
+                changeRequest();
+                expression {
+                  withLabels('webapp', 'spring-boot')
+                }
+              }
+            }
+          }
+          agent {
+            kubernetes {
+              yaml getMavenAgent() + getChromeAgent()
+            }
+          }
+          steps{
+            container("maven"){
+              catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                runMaven(true, true,'spring-boot-starter/', 'clean install -Pintegration-test-spring-boot-starter')
+              }
+            }
+          }
+          post {
+            always {
+              junit testResults: '**/target/*-reports/TEST-*.xml', keepLongStdio: true
             }
           }
         }
