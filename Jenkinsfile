@@ -92,6 +92,7 @@ pipeline {
     stage('h2 tests') {
       parallel {
         stage('engine-UNIT-h2') {
+          withLabels('h2')
           agent {
             kubernetes {
               yaml getMavenAgent(16)
@@ -104,6 +105,7 @@ pipeline {
           }
         }
         stage('engine-UNIT-authorizations-h2') {
+          withLabels('h2')
           agent {
             kubernetes {
               yaml getMavenAgent(16)
@@ -116,6 +118,7 @@ pipeline {
           }
         }
         stage('engine-rest-UNIT-jersey-2') {
+          withLabels('rest-api')
           agent {
             kubernetes {
               yaml getMavenAgent()
@@ -128,6 +131,7 @@ pipeline {
           }
         }
         stage('webapp-UNIT-h2') {
+          withLabels('webapp')
           agent {
             kubernetes {
               yaml getMavenAgent()
@@ -140,6 +144,7 @@ pipeline {
           }
         }
         stage('engine-IT-tomcat-9-h2') {// TODO change it to `postgresql-96`
+          withLabels('IT')
           agent {
             kubernetes {
               yaml getMavenAgent()
@@ -160,6 +165,7 @@ pipeline {
           }
         }
         stage('webapp-IT-tomcat-9-h2') {
+          withLabels('webapp')
           agent {
             kubernetes {
               yaml getMavenAgent() + getChromeAgent()
@@ -175,6 +181,7 @@ pipeline {
           }
         }
         stage('webapp-IT-standalone-wildfly') {
+          withLabels('webapp')
           agent {
             kubernetes {
               yaml getMavenAgent() + getChromeAgent()
@@ -274,5 +281,18 @@ void runMaven(boolean runtimeStash, boolean distroStash, String directory, Strin
   if (distroStash) unstash "platform-stash-distro"
   configFileProvider([configFile(fileId: 'maven-nexus-settings', variable: 'MAVEN_SETTINGS_XML')]) {
     sh("export MAVEN_OPTS='-Dmaven.repo.local=\$(pwd)/.m2' && cd ${directory} && mvn -s \$MAVEN_SETTINGS_XML ${cmd} -B")
+  }
+}
+void withLabels(String labelName) {
+  when {
+    anyOf {
+      branch 'hackdays-ya';
+      allOf {
+        changeRequest();
+        expression {
+          pullRequest.labels.contains(labelName)
+        }
+      }
+    }
   }
 }
