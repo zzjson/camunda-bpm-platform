@@ -60,6 +60,9 @@ String getChromeAgent(Integer cpuLimit = 1){
 
 pipeline {
   agent none
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5')) //, artifactNumToKeepStr: '30'
+  }
   stages {
     stage('ASSEMBLY') {
       agent {
