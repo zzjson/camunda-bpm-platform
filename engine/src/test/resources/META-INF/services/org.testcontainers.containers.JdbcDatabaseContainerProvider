@@ -1,0 +1,7 @@
+org.camunda.bpm.engine.test.util.testcontainers.CamundaPostgreSQLContainerProvider
+org.camunda.bpm.engine.test.util.testcontainers.CamundaMariaDBContainerProvider
+org.camunda.bpm.engine.test.util.testcontainers.CamundaMySqlContainerProvider
+org.camunda.bpm.engine.test.util.testcontainers.CamundaCockroachDBContainerProvider
+org.camunda.bpm.engine.test.util.testcontainers.CamundaMSSQLContainerProvider
+org.camunda.bpm.engine.test.util.testcontainers.CamundaDb2ContainerProvider
+org.camunda.bpm.engine.test.util.testcontainers.CamundaOracleContainerProvider
