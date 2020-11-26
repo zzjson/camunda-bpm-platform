@@ -21,7 +21,7 @@ import org.testcontainers.containers.MySQLContainerProvider;
 
 public class CamundaMySqlContainerProvider extends MySQLContainerProvider {
 
-  private static final String NAME = "camunda-ci-mysql";
+  private static final String NAME = "cammysql";
 
   @Override
   public boolean supports(String databaseType) {

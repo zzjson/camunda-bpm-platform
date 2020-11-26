@@ -22,7 +22,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 
 public class CamundaDb2ContainerProvider extends Db2ContainerProvider {
 
-  private static final String NAME = "camunda-ci-db2";
+  private static final String NAME = "camdb2";
 
   @Override
   public boolean supports(String databaseType) {

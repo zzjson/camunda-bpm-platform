@@ -23,7 +23,7 @@ import org.testcontainers.containers.OracleContainerProvider;
 
 public class CamundaOracleContainerProvider extends OracleContainerProvider {
 
-  private static final String NAME = "camunda-ci-oracle";
+  private static final String NAME = "camoracle";
 
   @Override
   public boolean supports(String databaseType) {

@@ -151,14 +151,14 @@
       <id>db2-111</id>
       <properties>
         <version.db2>${version.db2-11.1}</version.db2>
-        <database.docker.image>camunda-ci-db2:11.1</database.docker.image>
+        <database.tc.url>camdb2:11.1</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>db2-105</id>
       <properties>
         <version.db2>${version.db2-10.5}</version.db2>
-        <database.docker.image>camunda-ci-db2:10.5</database.docker.image>
+        <database.tc.url>camdb2:10.5</database.tc.url>
       </properties>
     </profile>
 
@@ -250,7 +250,7 @@
         <database.driver>org.mariadb.jdbc.Driver</database.driver>
         <database.datasource.class>org.mariadb.jdbc.MySQLDataSource</database.datasource.class>
         <database.url>jdbc:mariadb://${database.host}:${database.port}/${database.name}</database.url>
-        <database.docker.image>camunda-ci-mariadb:10.0</database.docker.image>
+        <database.tc.url>cammariadb:10.0</database.tc.url>
       </properties>
 
       <dependencies>
@@ -287,19 +287,19 @@
     <profile>
       <id>mariadb-10.3</id>
       <properties>
-        <database.docker.image>camunda-ci-mariadb:10.3</database.docker.image>
+        <database.tc.url>cammariadb:10.3</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>mariadb-10.2</id>
       <properties>
-        <database.docker.image>camunda-ci-mariadb:10.2</database.docker.image>
+        <database.tc.url>cammariadb:10.2</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>mariadb-10.0</id>
       <properties>
-        <database.docker.image>camunda-ci-mariadb:10.0</database.docker.image>
+        <database.tc.url>cammariadb:10.0</database.tc.url>
       </properties>
     </profile>
 
@@ -310,7 +310,7 @@
         <database.driver>com.mysql.jdbc.Driver</database.driver>
         <database.datasource.class>com.mysql.jdbc.jdbc2.optional.MysqlDataSource</database.datasource.class>
         <database.url>jdbc:mysql://${database.host}:${database.port}/${database.name}</database.url>
-        <database.docker.image>camunda-ci-mysql:5.7</database.docker.image>
+        <database.tc.url>cammysql:5.7</database.tc.url>
       </properties>
 
       <dependencies>
@@ -341,13 +341,13 @@
     <profile>
       <id>mysql-5.7</id>
       <properties>
-        <database.docker.image>camunda-ci-mysql:5.7</database.docker.image>
+        <database.tc.url>cammysql:5.7</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>mysql-5.6</id>
       <properties>
-        <database.docker.image>camunda-ci-mysql:5.6</database.docker.image>
+        <database.tc.url>cammysql:5.6</database.tc.url>
       </properties>
     </profile>
 
@@ -364,7 +364,7 @@
       <id>oracle-11</id>
       <properties>
         <version.oracle>${version.oracle-11}</version.oracle>
-        <database.docker.image>camunda-ci-oracle:11</database.docker.image>
+        <database.tc.url>camoracle:11</database.tc.url>
       </properties>
       <dependencies>
         <dependency>
@@ -395,7 +395,7 @@
       <id>oracle-12</id>
       <properties>
         <version.oracle>${version.oracle-12}</version.oracle>
-        <database.docker.image>camunda-ci-oracle:12</database.docker.image>
+        <database.tc.url>camoracle:12</database.tc.url>
       </properties>
       <dependencies>
         <dependency>
@@ -426,7 +426,7 @@
       <id>oracle-18</id>
       <properties>
         <version.oracle>${version.oracle-18}</version.oracle>
-        <database.docker.image>camunda-ci-oracle:18</database.docker.image>
+        <database.tc.url>camoracle:18</database.tc.url>
       </properties>
       <dependencies>
         <dependency>
@@ -458,7 +458,7 @@
       <id>oracle-19</id>
       <properties>
         <version.oracle>${version.oracle-19}</version.oracle>
-        <database.docker.image>camunda-ci-oracle:19</database.docker.image>
+        <database.tc.url>camoracle:19</database.tc.url>
       </properties>
       <dependencies>
         <dependency>
@@ -496,7 +496,7 @@
         <jboss.datasource.filename>postgresql-ds.xml</jboss.datasource.filename>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         <database.url>jdbc:postgresql://${database.host}:${database.port}/${database.name}</database.url>
-        <database.docker.image>campostgresql:9.6</database.docker.image>
+        <database.tc.url>campostgresql:9.6</database.tc.url>
       </properties>
 
       <dependencies>
@@ -527,43 +527,43 @@
     <profile>
       <id>postgresql-12.2</id>
       <properties>
-        <database.docker.image>campostgresql:12.2</database.docker.image>
+        <database.tc.url>campostgresql:12.2</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>postgresql-11.2</id>
       <properties>
-        <database.docker.image>campostgresql:11.2</database.docker.image>
+        <database.tc.url>campostgresql:11.2</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>postgresql-11.1</id>
       <properties>
-        <database.docker.image>campostgresql:11.1</database.docker.image>
+        <database.tc.url>campostgresql:11.1</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>postgresql-10.7</id>
       <properties>
-        <database.docker.image>campostgresql:10.7</database.docker.image>
+        <database.tc.url>campostgresql:10.7</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>postgresql-10.4</id>
       <properties>
-        <database.docker.image>campostgresql:10.4</database.docker.image>
+        <database.tc.url>campostgresql:10.4</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>postgresql-9.6</id>
       <properties>
-        <database.docker.image>campostgresql:9.6</database.docker.image>
+        <database.tc.url>campostgresql:9.6</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>postgresql-9.4</id>
       <properties>
-        <database.docker.image>campostgresql:9.4</database.docker.image>
+        <database.tc.url>campostgresql:9.4</database.tc.url>
       </properties>
     </profile>
     <profile>
@@ -582,7 +582,7 @@
         <jboss.datasource.filename>postgresql-ds.xml</jboss.datasource.filename>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         <database.url>jdbc:postgresql://${database.host}:${database.port}/${database.name}</database.url>
-        <database.docker.image>camunda-ci-cockroachdb:20.1.3</database.docker.image>
+        <database.tc.url>camcockroachdb:20.1.3</database.tc.url>
       </properties>
 
       <dependencies>
@@ -619,7 +619,7 @@
         <database.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</database.driver>
         <database.datasource.class>com.microsoft.sqlserver.jdbc.SQLServerDataSource</database.datasource.class>
         <database.url>jdbc:sqlserver://${database.host}:${database.port};DatabaseName=${database.name}</database.url>
-        <database.docker.image>camunda-ci-sqlserver:2012</database.docker.image>
+        <database.tc.url>camsqlserver:2012</database.tc.url>
       </properties>
 
       <dependencies>
@@ -650,20 +650,20 @@
     <profile>
       <id>sqlserver-2017</id>
       <properties>
-        <database.docker.image>camunda-ci-sqlserver:2017</database.docker.image>
+        <database.tc.url>camsqlserver:2017</database.tc.url>
       </properties>
     </profile>
     <profile>
       <id>sqlserver-2019</id>
       <properties>
-        <database.docker.image>camunda-ci-sqlserver:2019</database.docker.image>
+        <database.tc.url>camsqlserver:2019</database.tc.url>
       </properties>
     </profile>
 
     <profile>
       <id>testcontainers</id>
       <properties>
-        <database.url>jdbc:tc:${database.docker.image}:///${database.name}</database.url>
+        <database.url>jdbc:tc:${database.tc.url}:///${database.name}</database.url>
       </properties>
     </profile>
   </profiles>

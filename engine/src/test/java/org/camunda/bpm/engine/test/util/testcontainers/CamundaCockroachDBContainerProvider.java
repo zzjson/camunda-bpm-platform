@@ -21,7 +21,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 
 public class CamundaCockroachDBContainerProvider extends CockroachContainerProvider {
 
-  private static final String NAME = "camunda-ci-cockroachdb";
+  private static final String NAME = "camcockroachdb";
 
   @Override
   public boolean supports(String databaseType) {

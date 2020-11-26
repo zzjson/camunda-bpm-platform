@@ -21,7 +21,7 @@ import org.testcontainers.containers.MSSQLServerContainerProvider;
 
 public class CamundaMSSQLContainerProvider extends MSSQLServerContainerProvider {
 
-  private static final String NAME = "camunda-ci-sqlserver";
+  private static final String NAME = "camsqlserver";
 
   @Override
   public boolean supports(String databaseType) {

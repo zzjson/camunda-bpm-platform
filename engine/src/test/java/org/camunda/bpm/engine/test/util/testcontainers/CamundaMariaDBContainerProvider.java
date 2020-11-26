@@ -21,7 +21,7 @@ import org.testcontainers.containers.MariaDBContainerProvider;
 
 public class CamundaMariaDBContainerProvider extends MariaDBContainerProvider {
 
-  private static final String NAME = "camunda-ci-mariadb";
+  private static final String NAME = "cammariadb";
 
   @Override
   public boolean supports(String databaseType) {
