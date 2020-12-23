@@ -32,6 +32,9 @@ public class CamundaOracleContainerProvider extends OracleContainerProvider {
 
   @Override
   public JdbcDatabaseContainer newInstance(String tag) {
-    return new CamundaOracleContainer(TestcontainersHelper.resolveOracleImageName() + ":" + tag);
+    CamundaOracleContainer oracleContainer = new CamundaOracleContainer(TestcontainersHelper.resolveOracleImageName() + ":" + tag);
+    oracleContainer.withUsername("camunda");
+    oracleContainer.withPassword("camunda");
+    return oracleContainer;
   }
 }

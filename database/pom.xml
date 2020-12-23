@@ -663,7 +663,14 @@
     <profile>
       <id>testcontainers</id>
       <properties>
-        <database.url>jdbc:tc:${database.tc.url}:///${database.name}</database.url>
+        <database.url>jdbc:tc:${database.tc.url}://localhost:${database.port}/${database.name}?user=${database.username}&amp;amp;password=${database.password}</database.url>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>testcontainers-oracle</id>
+      <properties>
+        <database.url>jdbc:tc:${database.tc.url}:thin:@localhost:${database.port}:${database.name}?user=${database.username}&amp;amp;password=${database.password}</database.url>
       </properties>
     </profile>
   </profiles>

@@ -22,8 +22,5 @@ public class CamundaPostgreSQLContainer <SELF extends CamundaPostgreSQLContainer
 
   public CamundaPostgreSQLContainer(final String dockerImageName) {
     super(TestcontainersHelper.getRegistryUrl() + dockerImageName);
-    this.withDatabaseName("process-engine")
-        .withUsername("camunda")
-        .withPassword("camunda");
   }
 }

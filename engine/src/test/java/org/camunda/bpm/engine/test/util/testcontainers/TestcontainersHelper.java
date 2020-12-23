@@ -22,7 +22,7 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 public class TestcontainersHelper {
 
   public static String getRegistryUrl() {
-    String registryUrl = (String) TestcontainersConfiguration.getInstance().getProperties().get("docker.registry.url");
+    String registryUrl = (String) TestcontainersConfiguration.getInstance().getProperties().getOrDefault("docker.registry.url", "");
     if (StringUtils.isEmpty(registryUrl)) {
       return StringUtils.EMPTY;
     }

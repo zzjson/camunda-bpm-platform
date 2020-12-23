@@ -1,2 +1,5 @@
 mcr.microsoft.com/mssql/server:2017-latest
 mcr.microsoft.com/mssql/server:2019-latest
+registry.camunda.cloud/team-cambpm/camunda-ci-db2:11.1
+registry.camunda.cloud/team-cambpm/camunda-ci-db2:10.5
+registry.camunda.cloud/team-cambpm/camunda-ci-sqlserver:2012
