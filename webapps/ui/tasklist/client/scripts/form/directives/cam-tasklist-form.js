@@ -24,7 +24,7 @@ var EMBEDDED_KEY = 'embedded:',
   APP_KEY = 'app:',
   ENGINE_KEY = 'engine:',
   DEPLOYMENT_KEY = 'deployment:',
-  CAMUNDA_FORMS_KEY = 'camundaForms:';
+  CAMUNDA_FORMS_KEY = 'camunda-forms:';
 
 function compact(arr) {
   var a = [];
@@ -144,16 +144,9 @@ module.exports = function() {
             form.type = 'generic';
             return;
           }
-          console.log(key);
           if (key.indexOf(EMBEDDED_KEY) === 0) {
             key = key.substring(EMBEDDED_KEY.length);
-
-            // TODO: Allow engine to use 'camunda-forms:' type
-            if (key.endsWith('.json')) {
-              form.type = 'camunda-forms';
-            } else {
-              form.type = 'embedded';
-            }
+            form.type = 'embedded';
           } else if (key.indexOf(CAMUNDA_FORMS_KEY) === 0) {
             key = key.substring(CAMUNDA_FORMS_KEY.length);
             form.type = 'camunda-forms';
