@@ -41,7 +41,7 @@ module.exports = [
       $scope
     ));
 
-    var Deployment = camAPI.resource('deployment');
+    // var Deployment = camAPI.resource('deployment');
 
     var control = ($scope.control = {});
 
@@ -146,16 +146,34 @@ module.exports = [
           // do not load image twice
           deferred.resolve(null);
         } else {
-          Deployment.getResourceData(deployment.id, resource.id, function(
-            err,
-            res
-          ) {
-            if (err) {
+          fetch(
+            Uri.appUri(
+              'engine://engine/:engine/deployment/' +
+                deployment.id +
+                '/resources/' +
+                resource.id +
+                '/data'
+            )
+          )
+            .then(async res => {
+              const result = await res.text();
+              // console.log(res.text());
+              deferred.resolve({data: result});
+            })
+            .catch(err => {
               deferred.reject(err);
-            } else {
-              deferred.resolve({data: res});
-            }
-          });
+            });
+          // Deployment.getResourceData(deployment.id, resource.id, function(
+          //   err,
+          //   res
+          // ) {
+          //   if (err) {
+          //     deferred.reject(err);
+          //   } else {
+          //     console.log(res);
+          //     deferred.resolve({data: res});
+          //   }
+          // });
         }
 
         return deferred.promise;

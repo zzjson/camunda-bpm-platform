@@ -41,13 +41,19 @@ module.exports = [
       template: template,
 
       link: function($scope, $element) {
-        let isForm = ($scope.isForm = $scope.source.display === 'form');
+        const json = JSON.parse($scope.source);
+
+        let isForm = ($scope.isForm = json.display === 'form');
         if (isForm) {
           try {
-            createForm({
+            const form = createForm({
               container: $element.find('.camundaForm')[0],
-              schema: $scope.source,
+              schema: json,
               data: {}
+            });
+
+            form.on('submit', event => {
+              console.log(event);
             });
           } catch (error) {
             $scope.isForm = false;

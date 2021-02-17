@@ -175,13 +175,17 @@ Deployment.getResource = function(deploymentId, resourceId, done) {
  * Returns the binary content of a single deployment resource for the given deployment.
  */
 Deployment.getResourceData = function(deploymentId, resourceId, done) {
-  return this.http.get(
-    this.path + '/' + deploymentId + '/resources/' + resourceId + '/data',
-    {
-      accept: '*/*',
-      done: done
-    }
-  );
+  return this.http
+    .get(
+      this.path + '/' + deploymentId + '/resources/' + resourceId + '/data',
+      {
+        accept: '*/*',
+        done: done
+      }
+    )
+    .then(res => {
+      console.log(res);
+    });
 };
 
 /**

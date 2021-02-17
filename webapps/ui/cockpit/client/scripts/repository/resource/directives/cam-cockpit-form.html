@@ -1,11 +1,14 @@
 <!-- # cockpit client/scripts/repository/resource/directives/cam-cockpit-source.html -->
+<div ng-show="isForm">
+  <h4>Form Preview:</h4>
+  <div class="camundaForm"></div>
+  <h4 class="form-preview">Raw Data:</h4>
+</div>
+
 <div cam-source
       name="name"
       source="source"></div>
 
 
-<div ng-show="isForm">
-  <h4>Form preview:</h4>
-  <div class="camundaForm"></div>
-</div>
+
 <!-- / cockpit client/scripts/repository/resource/directives/cam-cockpit-source.html -->
